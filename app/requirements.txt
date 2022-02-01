@@ -1,0 +1,8 @@
+Django>=3.2.8,<3.3.0
+psycopg2-binary>=2.9.1,<2.10.0
+flake8>=3.9.2,<3.10.0
+djangorestframework>=3.12.4,<3.13.0
+drf-yasg>=1.20.0,<1.21.0
+djangorestframework-simplejwt>=4.8.0,<4.9.0
+django-redis>=5.0.0,<5.1.0
+django-debug-toolbar>=3.2.2,<3.3.0
