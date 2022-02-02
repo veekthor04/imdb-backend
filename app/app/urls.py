@@ -17,7 +17,6 @@ import debug_toolbar
 from django.contrib import admin
 from django.urls import path, include, re_path
 from django.shortcuts import redirect
-
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
@@ -65,7 +64,9 @@ urlpatterns = [
         SchemaView.with_ui('redoc', cache_timeout=0),
         name='redoc'),
     path('admin/', admin.site.urls),
-    path('', include('user.urls')),
     path('api-auth/', include('rest_framework.urls')),
-    path('__debug__/', include(debug_toolbar.urls))
+    path('__debug__/', include(debug_toolbar.urls)),
+    
+    path('', include('user.urls')),
+    path('movie/', include('movie.urls')),
 ]

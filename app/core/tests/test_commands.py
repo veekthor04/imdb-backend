@@ -6,6 +6,9 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 
 
+User = get_user_model()
+
+
 class CommandTests(TestCase):
 
     def test_wait_for_db_ready(self):
@@ -26,5 +29,5 @@ class CommandTests(TestCase):
     def test_initadmin(self):
         """Test initial admin account was created"""
         call_command('initadmin')
-        admin_accounts = get_user_model().objects.filter(is_superuser=True)
+        admin_accounts = User.objects.filter(is_superuser=True)
         self.assertTrue(admin_accounts.exists())

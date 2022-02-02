@@ -46,8 +46,9 @@ INSTALLED_APPS = [
     'debug_toolbar',
 
     # Local
-    'core',
-    'user'
+    'core.apps.CoreConfig',
+    'user.apps.UserConfig',
+    'movie.apps.MovieConfig'
 ]
 
 MIDDLEWARE = [
@@ -204,7 +205,10 @@ SWAGGER_SETTINGS = {
    },
    'LOGIN_URL': '/admin/login/',
    'LOGOUT_URL': '/admin/logout/',
-   'DEFAULT_AUTO_SCHEMA_CLASS': 'core.utils.CustomAutoSchema'
+   'DEFAULT_AUTO_SCHEMA_CLASS': 'core.utils.CustomAutoSchema',
+    # "DEFAULT_PAGINATOR_INSPECTORS": [
+    #     'core.inspector.PageNumberPaginatorInspectorClass',
+    # ],
 }
 
 

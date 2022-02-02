@@ -5,6 +5,9 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
 
 
+User = get_user_model()
+
+
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     """Custom Token serializer to add extra fields
     """
@@ -23,7 +26,7 @@ class Userserializer(serializers.ModelSerializer):
     """Serializer for users object"""
 
     class Meta:
-        model = get_user_model()
+        model = User
         fields = ('id', 'username', 'email', 'password')
         extra_kwargs = {
             'password': {
@@ -40,7 +43,7 @@ class Userserializer(serializers.ModelSerializer):
     def create(self, validated_data):
         """Creates a new user using the create_user
         """
-        return get_user_model().objects.create_user(**validated_data)
+        return User.objects.create_user(**validated_data)
 
     def update(self, instance, validated_data):
         """Updates a user, sets the password and returns it

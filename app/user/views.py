@@ -9,6 +9,8 @@ from rest_framework import generics, permissions, viewsets
 from .serializers import MyTokenObtainPairSerializer, Userserializer
 
 
+User = get_user_model()
+
 class MyTokenObtainPairView(TokenObtainPairView):
     """Custom token view
     """
@@ -31,7 +33,7 @@ class CreateUserView(generics.CreateAPIView):
 class ProfileUserView(generics.RetrieveUpdateDestroyAPIView):
     """Retives and updates the authenticated user's profile
     """
-    queryset = get_user_model().objects.all()
+    queryset = User.objects.all()
     serializer_class = Userserializer
     permission_classes = (permissions.IsAuthenticated,)
     my_tags = ["Profile"]
@@ -43,7 +45,7 @@ class ProfileUserView(generics.RetrieveUpdateDestroyAPIView):
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     """Listing or retrieving users"""
-    queryset = get_user_model().objects.all()
+    queryset = User.objects.all()
     serializer_class = Userserializer
     my_tags = ['Users']
 

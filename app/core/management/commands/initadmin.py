@@ -8,13 +8,16 @@ email = os.environ.get('DJANGO_SUPERUSER_EMAIL')
 password = os.environ.get('DJANGO_SUPERUSER_PASSWORD')
 
 
+User = get_user_model()
+
+
 class Command(BaseCommand):
     """Creates a new superuser account if no super user account exist"""
 
     def handle(self, *args, **options):
-        if get_user_model().objects.filter(is_superuser=True).count() == 0:
+        if User.objects.filter(is_superuser=True).count() == 0:
             print('Creating account for %s (%s)' % (username, email))
-            admin = get_user_model().objects.create_superuser(
+            admin = User.objects.create_superuser(
                 email=email,
                 username=username,
                 password=password
