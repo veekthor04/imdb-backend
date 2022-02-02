@@ -1,12 +1,12 @@
 from django.shortcuts import get_object_or_404
+from django.core.cache import cache
 from rest_framework import generics, permissions, pagination, status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
+from rest_framework.permissions import IsAuthenticated
 
 from core.models import Movie, UserMovieBookmark
-from movie.serializers import MovieSerializer, UserMovieBookmarkSerializer
+from movie.serializers import MovieSerializer
 from movie.swagger import get_bookmark_auto_schema, post_bookmark_auto_schema,\
     delete_bookmark_auto_schema
 
@@ -17,38 +17,34 @@ class MovieListCreateView(generics.ListCreateAPIView):
     serializer_class = MovieSerializer
     permission_classes = (permissions.IsAuthenticated,)
     my_tags = ["Movie"]
-
-
-class UserMovieBookmarkList(generics.ListAPIView):
-    queryset = Movie.objects.all()
-    serializer_class = MovieSerializer
-    permission_classes = (permissions.IsAuthenticated,)
-    my_tags = ["Movie Bookmark"]
     
     def get_queryset(self):
-        return UserMovieBookmark.objects.get(user=self.request.user).movies.all()
+        movie_queryset = cache.get('movie_queryset')
+        
+        if movie_queryset == None:
+            movie_queryset = Movie.objects.all()
+        cache.set('movie_queryset', movie_queryset)
+        return movie_queryset
+        
 
-
-# class UserMovieBookmark(generics.RetrieveUpdateDestroyAPIView):
-#     queryset = UserMovieBookmark.objects.all()
-#     serializer_class = UserMovieBookmarkSerializer
-#     permission_classes = (permissions.IsAuthenticated,)
-#     my_tags = ["Movie Bookmark"]
-    
-    
 @get_bookmark_auto_schema()
 @post_bookmark_auto_schema()
 @delete_bookmark_auto_schema()
+@permission_classes([IsAuthenticated,])
 @api_view(['GET', 'POST', 'DELETE'])
-def my_bookmark(request):
+def user_bookmark(request):
+    
     if request.method == 'GET':
         paginator = pagination.PageNumberPagination()
+        user_movies = cache.get(f'user_movies_{request.user.id}')
 
-        queryset = UserMovieBookmark.objects.get(
-            user=request.user
-        ).movies.all()
-        
-        page = paginator.paginate_queryset(queryset, request)
+        if user_movies is None:
+            user_movies = UserMovieBookmark.objects.get(
+                user=request.user
+            ).movies.all()
+            cache.set(f'user_movies_{request.user.id}', user_movies)
+
+        page = paginator.paginate_queryset(user_movies, request)
         serializer = MovieSerializer(page, many=True)
         return paginator.get_paginated_response(serializer.data)
     
@@ -59,7 +55,8 @@ def my_bookmark(request):
         UserMovieBookmark.objects.get(
             user=request.user
         ).movies.add(movie)
-        
+        cache.delete(f'user_movies_{request.user.id}')
+
         return Response(
             "Movie has been added to user's bookmark successfully", 
             status=status.HTTP_201_CREATED
@@ -72,6 +69,7 @@ def my_bookmark(request):
         UserMovieBookmark.objects.get(
             user=request.user
         ).movies.remove(movie)
+        cache.delete(f'user_movies_{request.user.id}')
         
         return Response(
             "Movie has been removed from user's bookmark successfully", 

@@ -14,7 +14,8 @@ def get_bookmark_auto_schema():
         responses={200: MovieSerializer(many=True)},
         operation_description="List user's bookmarked movies",
         paginator_inspectors=[PaginatorInspector,],
-        pagination_class=pagination.PageNumberPagination
+        pagination_class=pagination.PageNumberPagination,
+        tags=['User Movie Bookmark',]
     )
 
 
@@ -29,14 +30,10 @@ def post_bookmark_auto_schema():
         ),
         responses={
             200: "Movie has been removed from user's bookmark successfully",
-            404: openapi.Schema(
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    'detail': openapi.Schema(type=openapi.TYPE_STRING, example='Not found.'),
-                }
-            ),
+            404: "Not found."
         },
-        operation_description="Adds a movie to user's bookmark"
+        operation_description="Adds a movie to user's bookmark",
+        tags=['User Movie Bookmark',]
     )
     
 
@@ -51,12 +48,8 @@ def delete_bookmark_auto_schema():
         ),
         responses={
             200: "Movie has been removed from user's bookmark successfully",
-            404: openapi.Schema(
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    'detail': openapi.Schema(type=openapi.TYPE_STRING, example='Not found.'),
-                }
-            ),
+            404: "Not found."
         },
-        operation_description="Removes a movie from user's bookmark"
+        operation_description="Removes a movie from user's bookmark",
+        tags=['User Movie Bookmark',]
     )

@@ -12,12 +12,3 @@ class MovieSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return super().create(validated_data)
-
-
-class UserMovieBookmarkSerializer(serializers.ModelSerializer):
-    movies = MovieSerializer(many=True)
-    
-    class Meta:
-        model = UserMovieBookmark
-        fields = ['movies']
-        

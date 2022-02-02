@@ -18,6 +18,9 @@ services:
       python manage.py runserver 0.0.0.0:8000"
     depends_on:
       - db
+      - redis
+      - rabbitmq
+
   db:
     image: postgres:10-alpine
     env_file: .env
@@ -26,4 +29,21 @@ services:
 
   redis:
     image: redis:alpine
-    
+
+  rabbitmq:
+    image: rabbitmq:latest
+    ports:
+      - "5672:5672"
+    restart: always
+
+  celery:
+    restart: always
+    build:
+      context: ./app
+    command: celery -A app worker -l info
+    env_file: .env
+    depends_on:
+      - db
+      - redis
+      - rabbitmq
+      - app

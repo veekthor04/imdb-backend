@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
+from core.tasks import send_registration_email_task
+
 
 class User(AbstractUser):
     """Custom User model"""
@@ -8,6 +10,13 @@ class User(AbstractUser):
 
     class Meta:
         ordering = ['username']
+        
+    def send_registration_email(self):
+        """sends the a registration mail to the user"""
+        return send_registration_email_task.delay(
+            username=self.username,
+            email = self.email,
+        )
 
 
 class Movie(models.Model):

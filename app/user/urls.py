@@ -1,8 +1,10 @@
+"""
+User setup url config
+"""
 from django.urls import path
-
 from rest_framework.routers import SimpleRouter
 
-from .views import MyTokenObtainPairView, CreateUserView, \
+from user.views import MyTokenObtainPairView, CreateUserView,\
     ProfileUserView, MyTokenRefreshView, UserViewSet
 
 

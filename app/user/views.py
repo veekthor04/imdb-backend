@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
+from django.core.cache import cache
 
 from rest_framework_simplejwt.views import TokenObtainPairView,\
      TokenRefreshView
@@ -29,7 +30,6 @@ class CreateUserView(generics.CreateAPIView):
     serializer_class = Userserializer
     my_tags = ["User Authentication"]
 
-
 class ProfileUserView(generics.RetrieveUpdateDestroyAPIView):
     """Retives and updates the authenticated user's profile
     """
@@ -49,7 +49,15 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = Userserializer
     my_tags = ['Users']
 
-    # cache all list and view for a minute
-    @method_decorator(cache_page(60))
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
+    # # cache all list and view for a minute
+    # @method_decorator(cache_page(60*60*2))
+    # def dispatch(self, request, *args, **kwargs):
+    #     return super().dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        user_queryset = cache.get('user_queryset')
+        if user_queryset == None:
+            user_queryset = User.objects.all()
+        
+        cache.set('user_queryset', user_queryset)
+        return user_queryset

@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-s-a)lz_q2f*@)kuzt6n+(gw@-+(u0sxxcns+$#t2pv8@=w8x_c'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = (os.getenv('DEBUG', 'False') == 'True')
 
 ALLOWED_HOSTS = []
 
@@ -218,6 +218,7 @@ CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
         'LOCATION': os.environ.get('REDIS_URL'),
+        'TIMEOUT': 60*60*2,
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
         }
@@ -251,3 +252,17 @@ DEBUG_TOOLBAR_PANELS = [
 DEBUG_TOOLBAR_CONFIG = {
     "SHOW_TOOLBAR_CALLBACK": lambda request: True,
 }
+
+ADMIN_USERNAME = os.environ.get('DJANGO_SUPERUSER_USERNAME')
+ADMIN_EMAIL = os.environ.get('DJANGO_SUPERUSER_EMAIL')
+ADMIN_PASSWORD = os.environ.get('DJANGO_SUPERUSER_PASSWORD')
+
+# mail
+EMAIL_HOST = os.environ.get('EMAIL_HOST')
+EMAIL_PORT = os.environ.get('EMAIL_PORT')
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = (os.environ.get('EMAIL_USE_TLS', 'True') == 'True')
+
+# celery
+CELERY_BROKER_URL = os.environ.get('RABBITMQ_URL')
