@@ -14,7 +14,6 @@ def get_bookmark_auto_schema():
         responses={200: MovieSerializer(many=True)},
         operation_description="List user's bookmarked movies",
         paginator_inspectors=[PaginatorInspector,],
-        pagination_class=pagination.PageNumberPagination,
         tags=['User Movie Bookmark',]
     )
 
